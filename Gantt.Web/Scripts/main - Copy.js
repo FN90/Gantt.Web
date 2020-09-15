@@ -162,7 +162,7 @@
                     var date = data.tasks[i].StartDate;
                     console.log('date : ' + date)
                     var dateMillis = parseInt(date.replace("/Date(", "").replace(")/", ""));
-                    dateMillis = dateMillis - (3 * 60 * 60 * 1000); // fix time: date - 3 hours
+                    //dateMillis = dateMillis - (3 * 60 * 60 * 1000); // fix time: date - 3 hours
                     date = new Date(parseInt(dateMillis, 10));
                     // add options to the precedent task select
                     $('#PredecessorId').append('<option value="' + data.tasks[i].Id + '" data-date="' + date + '" data-duration="' + data.tasks[i].Duration + '">' + data.tasks[i].Text + '</option>');
