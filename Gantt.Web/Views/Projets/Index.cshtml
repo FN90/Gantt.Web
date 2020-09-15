@@ -1,0 +1,63 @@
+﻿
+@model IEnumerable<Gantt.Web.DAL.Task>
+
+@{
+	ViewBag.Title = "Liste des projets";
+}
+
+<div class="row">
+	<div class="col-md-12">
+		<h4>Liste des projets</h4>
+
+		<p>
+			<a href="@Url.Action("Create")" class="btn btn-outline-primary btn-sm"><i class="fas fa-plus-circle"></i> Créer un projet</a>
+		</p>
+		<table class="table table-hover display">
+			<thead>
+				<tr>
+					<th>
+						Projet
+					</th>
+					<th>
+						Date départ
+					</th>
+					<th>
+						Durée
+					</th>
+					<th>
+						Progression
+					</th>
+					
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Text)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.StartDate)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Duration)
+						</td>
+						<td>
+							@(item.Progress*100)%
+						</td>
+				
+						<td>
+							@Html.ActionLink("Modifier", "Edit", new { id = item.Id }) |
+							@Html.ActionLink("Détails", "Details", new { id = item.Id }) |
+							@Html.ActionLink("Supprimer", "Delete", new { id = item.Id }) |
+							<a href="/gantt/projet/@item.Id" target="_blank" class="btn btn-outline-primary btn-sm pt-0 pb-0">Gantt Chart</a> 
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+
+	</div>
+</div>

@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title - Gantt Chart</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel="stylesheet" href="~/Content/dashboard.css" />
+	@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">*@
+	<link rel="stylesheet" href="~/Scripts/datepicker/css/bootstrap-datepicker3.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css" />
+	<script src="https://kit.fontawesome.com/f5499e7c07.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+
+	@Scripts.Render("~/bundles/modernizr")
+	@{
+		var ControllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+		var ActionName = this.ViewContext.RouteData.Values["action"].ToString();
+	}
+</head>
+<body>
+	<style>
+		@@media print {
+			.no-print, .no-print * {
+				display: none !important;
+			}
+		}
+	</style>
+
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/home">
+			<b style="font-size: 18px">
+				Gantt Chart
+			</b>
+		</a>
+		<div class=" w-100" type="text" placeholder="Search" aria-label="Search"></div>
+
+		@Html.Partial("_LoginPartial")
+
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar no-print">
+				<div class="sidebar-sticky">
+					@if (Request.IsAuthenticated)
+					{
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link @(ControllerName.ToLower().Equals("home") ? "active" : "")" href="/home">
+								<i class="fas fa-home mr-2"></i>
+								Home
+							</a>
+						</li>
+						@if (User.IsInRole("Admin"))
+						{
+						<li class="nav-item">
+							<a class="nav-link @(ControllerName.ToLower().Equals("projets") ? "active" : "")" href="/projets">
+								<i class="fas fa-network-wired mr-2"></i>
+								Projets
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link @(ControllerName.ToLower().Equals("composants") ? "active" : "")" href="/composants">
+								<i class="fas fa-layer-group mr-2"></i>
+								Composants
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link @(ControllerName.ToLower().Equals("taches") ? "active" : "")" href="/taches">
+								<i class="fas fa-tasks mr-2"></i>
+								Taches
+							</a>
+						</li>
+						}
+						<li class="nav-item">
+							<a class="nav-link" href="/gantt/index">
+								<i class="fas fa-project-diagram  mr-2"></i>
+								Gantt
+							</a>
+						</li>
+
+					</ul>
+
+						if (User.IsInRole("Admin"))
+						{
+							<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+								<span>ADMIN</span>
+							</h6>
+							<ul class="nav flex-column mb-2">
+								<li class="nav-item">
+									<a class="nav-link @(ControllerName.ToLower().Equals("users") ? "active" : "")" href="/users">
+										<i class="far fa-user-circle mr-2"></i>
+										Utilisateurs
+									</a>
+								</li>
+
+							</ul>
+						}
+
+					}
+				</div>
+			</nav>
+			<br>
+			<br>
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 mt-5 px-4">
+				@if (TempData["Message"] != null)
+				{
+					<div class="alert alert-info" id="alertMessage">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<i class="fa fa-info-circle"></i>
+						@TempData["Message"]
+					</div>
+				}
+
+				@RenderBody()
+			</main>
+
+		</div>
+	</div>
+
+	<hr />
+	<footer>
+		<p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+	</footer>
+
+
+	@Scripts.Render("~/bundles/jquery")
+	@Scripts.Render("~/bundles/bootstrap")
+	@*<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/js/all.min.js"></script>*@
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+
+	@RenderSection("scripts", required: false)
+	<script>
+		$(document).ready(function () {
+			setInterval(function () {
+				$("#alertMessage").hide();
+			}, 4000);
+		});
+
+	</script>
+</body>
+</html>

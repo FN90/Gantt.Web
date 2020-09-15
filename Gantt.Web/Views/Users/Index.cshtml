@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Gantt.Web.Models.UserViewModel>
+@{
+    ViewBag.Title = "Utilisateurs";
+}
+
+<h4>Utilisateurs</h4>
+<p>
+	<a href="/account/register" class="btn btn-outline-primary"><i class="fas fa-plus-circle"></i> Créer un utilisateur</a>
+</p>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                Nom
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Nom
+                </td>
+                <td>
+                    @item.Email
+                </td>
+                <td>
+                    @item.Role
+                </td>
+                <td>
+                    <a href="/users/details/@item.Id" class="btn btn-outline-primary btn-sm pt-0 pb-0">Details</a>
+                    <a href="/users/edit/@item.Id" class="btn btn-primary btn-sm pt-0 pb-0">Modifier</a>
+                    <a href="/users/delete/@item.Id" class="btn btn-danger btn-sm pt-0 pb-0">Supprimer</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

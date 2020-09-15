@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Gantt.Web.Models.Composant>
+
+@{
+	ViewBag.Title = "Composants";
+}
+
+<h4>Composants</h4>
+
+<p>
+	<a href="@Url.Action("Create")" class="btn btn-outline-primary btn-sm"><i class="fas fa-plus-circle"></i> Créer un composant</a>
+</p>
+<table class="table table-hover display">
+	<thead>
+		<tr>
+			<th>
+				Composant
+			</th>
+			<th>
+				Projet
+			</th>
+			<th>
+				Date de départ
+			</th>
+			<th>
+				Durée
+			</th>
+			<th>
+				Progression
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Text)
+					<br />
+					<small>
+						@Html.DisplayFor(modelItem => item.Projet)
+					</small>
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Projet)
+				</td>
+				<td>
+					@item.StartDate.ToString("dd/MM/yyyy")
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Duration) minute(s)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Progress)
+				</td>
+
+
+				<td>
+					@Html.ActionLink("Modifier", "Edit", new { id = item.Id }) |
+					@Html.ActionLink("Détails", "Details", new { id = item.Id }) |
+					@Html.ActionLink("Supprimer", "Delete", new { id = item.Id })
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

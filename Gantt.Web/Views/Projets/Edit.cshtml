@@ -1,0 +1,102 @@
+﻿@model Gantt.Web.DAL.Task
+
+@{
+	ViewBag.Title = "Modifier un projet";
+}
+
+<h4>Modifier un projet</h4>
+
+@using (Html.BeginForm())
+{
+	@Html.AntiForgeryToken()
+
+	<div class="col-md-6">
+
+		<hr>
+
+		<div class="form-group">
+			<label class="control-label" for="Text">Titre</label>
+			<input class="form-control" id="Text" name="Text" type="text" value="@Model.Text">
+			<span class="field-validation-valid" data-valmsg-for="Text" data-valmsg-replace="true"></span>
+
+		</div>
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-6">
+					<label class="control-label" for="StartDate">
+						Date de départ (Mois/Jour/Année)
+					</label>
+					@*<input class="form-control" data-val="true" data-val-date="The field Start Date must be a date." data-val-required="The StartDate field is required." id="StartDate" name="StartDate" type="datetime" value="">*@
+
+					<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+						<input type="text" class="form-control datetimepicker-input" name="StartDate" id="StartDate" data-target="#datetimepicker1" data-toggle="datetimepicker" value="@Model.StartDate" />
+						<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+							<div class="input-group-text"><i class="fa fa-calendar"></i></div>
+						</div>
+					</div>
+
+					@Html.ValidationMessageFor(model => model.StartDate)
+				</div>
+				<div class="col-md-6">
+					<label class="control-label" for="Duration">Durée (minute)</label>
+					<input class="form-control" data-val="true" data-val-number="The field Duration must be a number." data-val-required="The Duration field is required." id="Duration" name="Duration" type="number" value="@Model.Duration">
+					@Html.ValidationMessageFor(model => model.Duration)
+				</div>
+
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label" for="Progress">Progression</label>
+			<br />
+			@*<input class="form-control" data-val="true" data-val-number="The field Progress must be a number." data-val-required="The Progress field is required." id="Progress" name="Progress" type="hidden" value="0">*@
+			<input type="range" class="custom-range" name="Progress" id="progression" min="0" max="100" value="@(Model.Progress*100)" style="width: 100%">
+			<span id="progressionVal">@(Model.Progress*100)%</span>
+			@*<span class="field-validation-valid" data-valmsg-for="Progress" data-valmsg-replace="true"></span>*@
+
+		</div>
+
+		<div class="form-group">
+			@*<label class="control-label" for="SortOrder">SortOrder</label>*@
+			<input type="hidden" class="form-control" data-val="true" data-val-number="The field SortOrder must be a number." data-val-required="The SortOrder field is required." id="SortOrder" name="SortOrder" value="0">
+			@*<span class="field-validation-valid" data-valmsg-for="SortOrder" data-valmsg-replace="true"></span>*@
+
+		</div>
+
+		<div class="form-group">
+			@*	<label class="control-label" for="Type">Type</label>*@
+			<input type="hidden" class="form-control" id="Type" name="Type" value="project">
+			@*<span class="field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>*@
+
+		</div>
+
+
+		<hr />
+		<div class="form-group">
+			<input type="submit" value="Mettre a jour" class="btn btn-primary">
+		</div>
+		<div>
+			@Html.ActionLink("Retourner a la liste", "Index")
+		</div>
+	</div>
+}
+
+
+@*<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>*@
+@section Scripts {
+	@Scripts.Render("~/bundles/jqueryval")
+<script>
+	$(document).ready(function () {
+		$('#datetimepicker1').datetimepicker({
+			date: '@Model.StartDate',			
+		});
+
+		$('#progression').on('change', function () {
+			$('#progressionVal').html($(this).val() + '%');
+		});
+	});
+</script>
+}
+

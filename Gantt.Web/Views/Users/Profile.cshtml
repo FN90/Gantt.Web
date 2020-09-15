@@ -1,0 +1,28 @@
+﻿@model Gantt.Web.Models.EditUserViewModel
+@{
+	ViewBag.Title = "Mon profil";
+}
+
+<h4>@ViewBag.Title</h4>
+<table class="table table-hover">
+	<tr>
+		<th width="10%">
+			Nom
+		</th>
+		<td>
+			@Model.FirstName @Model.LastName
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Email
+		</th>
+		<td>
+			@Model.Email
+		</td>
+	</tr>
+</table>
+
+
+<a href="/users/edit/@Model.Id" class="btn btn-primary btn-sm">Modifier</a>
+<a href="/Manage/ChangePassword" class="btn btn-primary btn-sm">Changer le mot de passe</a>

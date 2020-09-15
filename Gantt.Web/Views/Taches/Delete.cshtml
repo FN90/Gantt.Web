@@ -1,0 +1,114 @@
+﻿@model Gantt.Web.DAL.Task
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h4>Delete</h4>
+
+<b>Are you sure you want to delete this?</b>
+<div>
+    <b>Task</b>
+    <hr />
+    <table class="table table-hover">
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Text)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.Text)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.StartDate)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.StartDate)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Duration)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.Duration)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Progress)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.Progress)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.SortOrder)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.SortOrder)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Type)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.Type)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.ParentId)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.ParentId)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.CentreCharge)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.CentreCharge)
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Employe)
+			</th>
+
+			<td>
+				@Html.DisplayFor(model => model.Employe)
+			</td>
+		</tr>
+
+    </table>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            @Html.ActionLink("Cancel", "Index")
+        </div>
+    }
+</div>

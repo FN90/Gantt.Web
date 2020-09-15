@@ -1,0 +1,44 @@
+﻿@model Gantt.Web.Models.EditUserViewModel
+
+@{
+    ViewBag.Title = "Supprimer";
+}
+
+	<h4>Supprimer</h4>
+
+<b>Voulez-vous vraiment supprimer ca?</b>
+<div>
+    <b>Utilisateur</b>
+    <hr />
+    <table class="table table-hover">
+		<tr>
+			<th>
+				Nom
+			</th>
+
+			<td>
+				@Model.FirstName @Model.LastName
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				Email	
+			</th>
+
+			<td>
+				@Model.Email
+			</td>
+		</tr>
+
+    </table>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger btn-sm pt-0 pb-0" /> |
+            @Html.ActionLink("Annuler", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,44 @@
+﻿
+@{
+	ViewBag.Title = "Pas autorisé à accéder";
+}
+
+<h4 class="text-danger">Vous n'êtes pas autorisé à accéder à cette page</h4>
+<p class="lead">
+	<i class="fa fa-exclamation-triangle"></i>
+	Vous ne disposez pas de l'autorisation, seuls les administrateurs sont autorisés à accéder à cette page.
+</p>
+<p class="lead">
+	Veuillez vous connecter en tant qu'administrateur pour accéder
+</p>
+<br />
+@using Microsoft.AspNet.Identity
+@using System.Security.Claims
+@if (Request.IsAuthenticated)
+{
+
+	var firstName = ((ClaimsPrincipal)HttpContext.Current.User).FindFirst("FirstName");
+	var firstNameStr = "Null";
+	if (firstName != null)
+	{
+		firstNameStr = firstName.Value;
+	}
+	using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+	{
+		@Html.AntiForgeryToken()
+
+		<div style="white-space: nowrap;">
+			<b>Utilisateur: </b>
+			<a href="/details" title="Manage"><b>@firstNameStr</b></a>
+			|
+			<a href="javascript:document.getElementById('logoutForm').submit()">Déconnexion</a>
+		</div>
+	}
+}
+else
+{
+	<ul class="navbar-nav px-3" style="white-space:nowrap; font-weight: bold !important; color:#f1eeee !important">
+		@*        <li class="nav-item text-nowrap">@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class="nav-link" })</li>*@
+		<li>@Html.ActionLink("S'identifier", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+	</ul>
+}

@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Gantt.Web.Models.CalendrierViewModel>
+@{
+	ViewBag.Title = "Calendrier";
+}
+@using Gantt.Web.Database
+@{
+	
+	InstrumentSpecifique instrument = ViewBag.InstrumentSpecifique;
+
+}
+
+<h4>Calendrier de calibrage de l'instrument specifique: @instrument.Code</h4>
+<hr />
+<table class="table table-hover table-sm">
+	<tr>
+		<th width="20%">
+			Date de mise en service
+		</th>
+		<td>
+			@instrument.DateMiseEnService.Value.ToString("dd-MM-yyyy")
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Freq. Calibrage
+		</th>
+		<td>
+			@instrument.FrequenceCalibrage
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Nombre total de calibrages pour @DateTime.Now.Year
+		</th>
+		<td>
+			@Model.Count()
+		</td>
+	</tr>
+</table>
+
+
+
+
+<hr />
+<link href='~/Scripts/fullcalendar/main.css' rel='stylesheet' />
+
+
+<style>
+
+
+	#calendar {
+		max-width: 1100px;
+		/*		margin: 0 auto;*/
+	}
+</style>
+
+
+<script>
+	var calibrages = [];
+</script>
+@foreach (var item in Model)
+{
+	<script>
+			var obj = {};
+
+			obj.title = "@item.Description";
+			obj.start = "@item.Date";
+			obj.end = "@item.Date";
+
+			calibrages.push(obj);
+	</script>
+}
+
+<div id='calendar'></div>
+
+<script src="~/Scripts/fullcalendar/main.js"></script>
+@section Scripts {
+	@Scripts.Render("~/bundles/jqueryval")
+	<script>
+
+		document.addEventListener('DOMContentLoaded', function () {
+			var calendarEl = document.getElementById('calendar');
+
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				headerToolbar: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+				},
+				editable: false,
+				locale: "fr",
+				selectable: true,
+				businessHours: true,
+				dayMaxEvents: true, // allow "more" link when too many events
+				events: calibrages
+			});
+
+			calendar.render();
+		});
+
+	</script>
+}

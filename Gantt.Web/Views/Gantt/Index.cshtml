@@ -1,0 +1,324 @@
+﻿@{ 
+	ViewBag.Title = "Gantt Chart";
+	Layout = "~/Views/Shared/_GanttLayout.cshtml"; }
+
+	<script>
+		var projetId = @(ViewBag.ProjetId != null ? ViewBag.ProjetId:0);
+		var isAdmin = false;
+
+	</script>
+
+@if (User.IsInRole("Admin"))
+{ 
+	<script>
+		isAdmin = true;
+	</script>
+}
+@*<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Large modal</button>*@
+	<div class="row m-0 p-0">
+		<div class="col-md-12 p-0">
+			<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+				<a href="/home" class="btn btn-primary">Administration</a>
+				<div class="btn-group" role="group">
+					<button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Ajouter
+					</button>
+					<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+						<a class="dropdown-item" href="/projets/create">Nouveau projet</a>
+						<a class="dropdown-item" href="/composants/create">Nouveau composant</a>
+						<a class="dropdown-item" href="/taches/create">Nouvelle tache</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<div id="ganttContainer" style='width:100vw; height:100%; min-height: 94vh !important'></div>
+
+
+
+
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="taskModal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Nouvelle Tache sous: <span class="composantText"></span></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="/taches/Create" method="post">
+					<input type="hidden" name="ParentId" id="ParentId" />
+					<div class="form-group">
+						<strong>
+							Tâche précédente
+						</strong>
+						<br />
+						<label class="control-label" for="ParentId"><span class="composantText"></span></label>
+						<select class="form-control predecessorSelect" name="PredecessorId" id="PredecessorId">
+							<option value="">Sélectionner...</option>
+						</select>
+						<div class="alert alert-warning" id="firstTaskWarning" style="display: none">
+							Il s'agit de la première tâche du projet, vous ne pouvez pas spécifier de prédécesseur.
+						</div>
+						<span class="field-validation-valid" data-valmsg-for="ParentId" data-valmsg-replace="true"></span>
+					</div>
+
+					<hr>
+					<strong>
+						Infos sur la tâche
+					</strong>
+					<div class="form-group">
+						<label class="control-label" for="Text">Titre</label>
+						<input class="form-control" id="Text" name="Text" type="text" value="" placeholder="Entrez le titre de la tâche ...">
+						<span class="field-validation-valid" data-valmsg-for="Text" data-valmsg-replace="true"></span>
+
+					</div>
+
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-6">
+								<label class="control-label" for="StartDate">
+									Date de départ (Mois/Jour/Année)
+								</label>
+
+
+								<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+									<input type="text" class="form-control datetimepicker-input" name="StartDate" id="StartDate" data-target="#datetimepicker1" data-toggle="datetimepicker">
+									<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+										<div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+									</div>
+								</div>
+
+								<span class="field-validation-valid" data-valmsg-for="StartDate" data-valmsg-replace="true"></span>
+							</div>
+							<div class="col-md-6">
+								<label class="control-label" for="Duration">Durée (minute)</label>
+								<input class="form-control" data-val="true" data-val-number="The field Duration must be a number." data-val-required="The Duration field is required." id="Duration" name="Duration" type="number" value="">
+								<span class="field-validation-valid" data-valmsg-for="Duration" data-valmsg-replace="true"></span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-6">
+								<label class="control-label" for="Duration">Centre de charge</label>
+								<input class="form-control" type="text" name="CentreCharge" id="CentreCharge">
+								<span class="field-validation-valid" data-valmsg-for="Duration" data-valmsg-replace="true"></span>
+							</div>
+							<div class="col-md-6">
+								<label class="control-label" for="Duration">Employe</label>
+								<input class="form-control" type="text" id="Employe" name="Employe" value="">
+								<span class="field-validation-valid" data-valmsg-for="Employe" data-valmsg-replace="true"></span>
+							</div>
+						</div>
+					</div>
+
+					<hr>
+					<div class="form-group">
+						<input type="submit" value="Créer" class="btn btn-primary">
+						<input type="button" value="Annuler" class="btn btn-primary" id="cancelBtn">
+						@*<a href="/home/index" class="btn btn-secondary">Annuler</a>*@
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="youAreNotAuthorizedModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">L'autorisation a échoué</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p class="text-danger">
+					Vous n'êtes pas autorisé à apporter des modifications dans le diagramme de Gantt. Vous devez vous connecter avec un compte administrateur pour continuer.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" id="youCannotAddTaskOkBtn">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="youCannotAddTaskModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Erreur</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p class="text-danger">
+					Vous ne pouvez pas ajouter une tâche à une autre tâche
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" id="youCannotAddTaskOkBtn">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="addComposant">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"> Ajouter un composant dans: <span class="projectName"></span></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="/composants/Create" method="post">
+
+					<div class="form-group">
+						<label class="control-label" for="ParentId">Projet</label>
+						<input type="hidden" name="ParentId" id="ComposantParentId" />
+						:
+						<span class="projectName"></span>
+						<span class="field-validation-valid" data-valmsg-for="ParentId" data-valmsg-replace="true"></span>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="Text">Composant</label>
+						<input class="form-control" id="Text" name="Text" type="text" value="">
+						<span class="field-validation-valid" data-valmsg-for="Text" data-valmsg-replace="true"></span>
+
+					</div>
+
+
+
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-12">
+								<label class="control-label" for="StartDate">
+									Date de départ (Mois/Jour/Année)
+								</label>
+
+
+								<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+									<input type="text" class="form-control datetimepicker-input" name="StartDate" id="StartDate" data-target="#datetimepicker2" data-toggle="datetimepicker">
+									<div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+										<div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+									</div>
+								</div>
+
+								<span class="field-validation-valid" data-valmsg-for="StartDate" data-valmsg-replace="true"></span>
+							</div>
+
+
+						</div>
+					</div>
+					<div class="form-group">
+
+						<label class="control-label" for="Duration">Durée (minute)</label>
+						<input class="form-control" data-val="true" data-val-number="The field Duration must be a number." data-val-required="The Duration field is required." id="Duration" name="Duration" type="number" value="">
+						<span class="field-validation-valid" data-valmsg-for="Duration" data-valmsg-replace="true"></span>
+
+					</div>
+
+					<div class="form-group">
+						<input type="hidden" class="form-control" data-val="true" data-val-number="The field SortOrder must be a number." data-val-required="The SortOrder field is required." id="SortOrder" name="SortOrder" value="0">
+					</div>
+
+					<div class="form-group">
+						<input type="hidden" class="form-control" id="Type" name="Type" value="project">
+					</div>
+					<hr />
+					<div class="form-group">
+						<input type="submit" value="Créer" class="btn btn-primary">
+					</div>
+
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="addProject">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Créer un projet</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="/projets/Create" method="post">
+					<div class="col-md-12">
+
+
+						<div class="form-group">
+							<label class="control-label" for="Text">Titre</label>
+							<input class="form-control" id="Text" name="Text" type="text" value="">
+							<span class="field-validation-valid" data-valmsg-for="Text" data-valmsg-replace="true"></span>
+
+						</div>
+
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<label class="control-label" for="StartDate">
+										Date de départ (Mois/Jour/Année)
+									</label>
+
+
+									<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+										<input type="text" class="form-control datetimepicker-input" name="StartDate" id="StartDate" data-target="#datetimepicker3" data-toggle="datetimepicker">
+										<div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+											<div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+										</div>
+									</div>
+
+									<span class="field-validation-valid" data-valmsg-for="StartDate" data-valmsg-replace="true"></span>
+								</div>
+								<div class="col-md-6">
+									@*<label class="control-label" for="Duration">Durée (minute)</label>*@
+									<input class="form-control" data-val="true" data-val-number="The field Duration must be a number." data-val-required="The Duration field is required." id="Duration" name="Duration" type="hidden" value="1">
+									@*<span class="field-validation-valid" data-valmsg-for="Duration" data-valmsg-replace="true"></span>*@
+								</div>
+
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<input type="hidden" class="form-control" id="Type" name="Type" value="project">
+						</div>
+
+						<hr />
+
+						<div class="form-group">
+							<input type="submit" value="Créer" class="btn btn-primary">
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+

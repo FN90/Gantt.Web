@@ -1,0 +1,146 @@
+﻿@model Gantt.Web.DAL.Task
+@using Gantt.Web.Models;
+
+@{
+	ViewBag.Title = "Créer une tâche";
+	List<Projet> Projects = ViewBag.Projects;
+}
+<div class="col-md-6">
+
+	<h4>Modifier une tâche</h4>
+
+	@using (Html.BeginForm())
+	{
+		@Html.AntiForgeryToken()
+
+		<div>
+
+			<hr />
+			@Html.ValidationSummary(true)
+		
+			<input type="hidden" name="PredecessorId" id="PredecessorValueId" />
+			<script>
+		var composantIds = [];
+			</script>
+
+
+			<h4>
+				Infos sur la tâche
+			</h4>
+			<div class="form-group">
+				<label class="control-label" for="Text">Titre</label>
+				<input class="form-control" id="Text" name="Text" type="text" value="@Model.Text" placeholder="Entrez le titre de la tâche ...">
+				@Html.ValidationMessageFor(model => model.Text)
+
+			</div>
+
+			<div class="form-group">
+				<div class="row">
+					<div class="col-md-6">
+						<label class="control-label" for="StartDate">
+							Date de départ
+						</label>
+						@*<input class="form-control" data-val="true" data-val-date="The field Start Date must be a date." data-val-required="The StartDate field is required." id="StartDate" name="StartDate" type="datetime" value="">*@
+
+						<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+							<input type="text" readonly class="form-control datetimepicker-input" name="StartDate" id="StartDate" data-target="#datetimepicker1" data-toggle="datetimepicker" value="@Model.StartDate" />
+							<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+								<div class="input-group-text"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+
+						@Html.ValidationMessageFor(model => model.StartDate)
+					</div>
+					<div class="col-md-6">
+						<label class="control-label" for="Duration">Durée (minute)</label>
+						<input class="form-control" readonly data-val="true" data-val-number="The field Duration must be a number." data-val-required="The Duration field is required." id="Duration" name="Duration" type="number" value="@Model.Duration">
+						@Html.ValidationMessageFor(model => model.Duration)
+					</div>
+
+				</div>
+			</div>
+
+			@*<div class="form-group">
+					<label class="control-label" for="Duration">Duration</label>
+					<input class="form-control" data-val="true" data-val-number="The field Duration must be a number." data-val-required="The Duration field is required." id="Duration" name="Duration" type="number" value="">
+					@Html.ValidationMessageFor(model => model.Duration)
+
+				</div>*@
+
+			@*<div class="form-group">
+					@Html.LabelFor(model => model.Progress, htmlAttributes: new { @class = "control-label" })
+					<input class="form-control" data-val="true" data-val-number="The field Progress must be a number." data-val-required="The Progress field is required." id="Progress" name="Progress" type="text" value="">
+					@Html.ValidationMessageFor(model => model.Progress)
+				</div>*@
+
+			<div class="form-group">
+				<div class="row">
+					<div class="col-md-6">
+						<label class="control-label" for="Duration">Centre de charge</label>
+						<input class="form-control" type="text" name="CentreCharge" id="CentreCharge" value="@Model.CentreCharge">
+						<span class="field-validation-valid" data-valmsg-for="Duration" data-valmsg-replace="true"></span>
+					</div>
+					<div class="col-md-6">
+						<label class="control-label" for="Duration">Employe</label>
+						<input class="form-control" type="text" id="Employe" name="Employe" value="@Model.Employe">
+						<span class="field-validation-valid" data-valmsg-for="Employe" data-valmsg-replace="true"></span>
+					</div>
+				</div>
+			</div>
+			<hr />
+			<div class="form-group">
+				<input type="submit" value="Envoyer" class="btn btn-primary" />
+			</div>
+		</div>
+
+	}
+
+	@*<div>
+			@Html.ActionLink("Back to List", "Index")
+		</div>*@
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+
+<script>
+	$(document).ready(function () {
+		$('#datetimepicker1').datetimepicker({
+			//minDate: new Date(),
+			//format: 'L'
+			date: '@Model.StartDate'
+		});
+		var options = { year: 'numeric', month: 'numeric', day: 'numeric', minute: 'numeric', hour: 'numeric' };
+
+		$('#ParentId').on('change', function () {
+			for (i = 0; i < composantIds.length; i++) {
+				$('#projectComposants' + composantIds[i]).hide();
+			}
+			$('#projectComposants' + $(this).val()).show();
+			var projectHasTasks = $(this).find(':selected').data('hastasks');
+			console.log('projectHasTasks:' + projectHasTasks)
+			if (projectHasTasks) {
+				$('#StartDate').prop('readonly', true);
+			} else {
+				$('#StartDate').prop('readonly', false);
+			}
+		});
+
+		$('.predecessorSelect').on('change', function () {
+			var startDate = new Date($(this).children('option:selected').data('date'));
+			var duration = parseInt($(this).children('option:selected').data('duration'));
+			var newStartDate = new Date();
+			// set the value of the hidden input to be sent to the backend
+			$('#PredecessorValueId').val($(this).val());
+			newStartDate = startDate.addDays(duration);
+			console.log('startDate:' + startDate);
+			console.log('duration:' + duration);
+			console.log('newStartDate:' + newStartDate);
+			$('#StartDate').val(newStartDate.toLocaleDateString("en-US", options));
+		});
+
+		Date.prototype.addDays = function (days) {
+			var date = new Date(this.valueOf());
+			date.setMinutes(date.getMinutes() + days);
+			return date;
+		}
+	});
+</script>

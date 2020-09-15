@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNet.Identity
+@using System.Security.Claims
+@if (Request.IsAuthenticated)
+{
+
+	var firstName = ((ClaimsPrincipal)HttpContext.Current.User).FindFirst("FirstName");
+	
+	var firstNameStr = "Null";
+	if (firstName != null)
+	{
+		firstNameStr = firstName.Value;
+	}
+	using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+	{
+		@Html.AntiForgeryToken()
+
+	<div style="white-space: nowrap; color: white !important" class="ml-3 mr-3">
+
+		<a href="/users/profile/@User.Identity.GetUserId()" title="Manage" class="text-light"><b>@firstNameStr</b></a>	
+		|
+		<a href="javascript:document.getElementById('logoutForm').submit()" class="text-light">Déconnexion</a>
+	</div>
+	}
+}
+else
+{
+	<ul class="navbar-nav px-3" style="white-space:nowrap; font-weight: bold !important; color:#f1eeee !important">
+		@*        <li class="nav-item text-nowrap">@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class="nav-link" })</li>*@
+		<li>@Html.ActionLink("S'identifier", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+	</ul>
+}
