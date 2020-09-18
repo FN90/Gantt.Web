@@ -178,6 +178,8 @@ namespace Gantt.Web.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            ViewBag.Roles = new SelectList(context.Roles.ToList(), "Name", "Name");
+
             return View(model);
         }
 

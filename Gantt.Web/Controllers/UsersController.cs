@@ -109,6 +109,8 @@ namespace Gantt.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(EditUserViewModel model)
         {
+            ViewBag.Roles = new SelectList(context.Roles.ToList(), "Name", "Name");
+
             model.UserName = model.Email;
             if (ModelState.IsValid)
             {

@@ -31,9 +31,17 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-        </div>
+		
+		<div class="col-md-10">
+			@Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+			<p>
+				Les mots de passe doivent avoir au moins un caractère autre qu'une lettre ou un chiffre.
+				<br />
+				Les mots de passe doivent avoir au moins une minuscule (a - z).
+				<br />
+				Les mots de passe doivent avoir au moins une majuscule (A - Z).
+			</p>
+		</div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
