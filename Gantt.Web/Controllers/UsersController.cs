@@ -141,7 +141,7 @@ namespace Gantt.Web.Controllers
                     userManager.RemoveFromRole(user.Id, oldRoleName);
                     userManager.AddToRole(user.Id, model.UserRoles);
                 }
-                context.Entry(user).State = EntityState.Modified;
+                //context.Entry(user).State = EntityState.Modified;
 
 
                 TempData["Message"] = "L'utilisateur a été modifié avec succès";
